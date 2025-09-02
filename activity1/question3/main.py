@@ -18,7 +18,7 @@ from __future__ import annotations
 import argparse
 import os
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Tuple, Any
 
 import numpy as np
 import pandas as pd
@@ -32,7 +32,7 @@ from sklearn.tree import DecisionTreeClassifier, export_text
 
 
 DEFAULT_DATASET_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "data", "dataset.csv"
+    os.path.dirname(__file__), "..", "data", "dataset1.csv"
 )
 
 
@@ -67,7 +67,9 @@ def train_decision_tree(
     )
     clf.fit(X, y)
     return ModelArtifacts(
-        clf=clf, feature_names=list(X.columns), class_names=list(clf.classes_)
+        clf=clf,
+        feature_names=list(X.columns),
+        class_names=[str(c) for c in clf.classes_],
     )
 
 
@@ -99,18 +101,25 @@ def generate_rules(art: ModelArtifacts, max_rules: int | None = 30) -> List[str]
 
     Retorna as regras ordenadas por suporte (n_amostras no nó folha) decrescente.
     """
-    tree_ = art.clf.tree_
+    # Tipa tree_ como Any para evitar erros estáticos ao acessar atributos internos
+    tree_: Any = art.clf.tree_
     features = art.feature_names
     class_names = art.class_names
+
+    # Construção do mapa filho->pai (scikit-learn não expõe pai diretamente)
+    parents_map = {}
+    for parent in range(tree_.node_count):
+        left = tree_.children_left[parent]
+        right = tree_.children_right[parent]
+        if left != -1:
+            parents_map[left] = parent
+        if right != -1:
+            parents_map[right] = parent
 
     # Helper para construir condições ascendendo da folha à raiz
     def _node_to_rule(leaf_id: int) -> Tuple[str, int, str]:
         path = []
         node = leaf_id
-
-        # Reconstroi os pais usando um mapa de filhos->pai
-        # Nota: scikit-learn não expõe pai diretamente; construímos uma vez
-        nonlocal parents_map
         conds: List[str] = []
         while node != 0:  # 0 é a raiz
             parent = parents_map[node]
@@ -129,16 +138,6 @@ def generate_rules(art: ModelArtifacts, max_rules: int | None = 30) -> List[str]
         pred_class = class_names[int(np.argmax(value))]
         rule = f"IF {' AND '.join(conds) if conds else 'TRUE'} THEN Target = {pred_class} (suporte={n_node_samples})"
         return rule, n_node_samples, pred_class
-
-    # Construção do mapa filho->pai
-    parents_map = {}
-    for parent in range(tree_.node_count):
-        left = tree_.children_left[parent]
-        right = tree_.children_right[parent]
-        if left != -1:
-            parents_map[left] = parent
-        if right != -1:
-            parents_map[right] = parent
 
     leaf_ids = [i for i in range(tree_.node_count) if tree_.children_left[i] == -1]
     rules = [_node_to_rule(leaf_id) for leaf_id in leaf_ids]
@@ -210,7 +209,7 @@ def main():
     parser.add_argument(
         "--data",
         default=DEFAULT_DATASET_PATH,
-        help="Caminho para o CSV (padrão: data/dataset.csv)",
+        help="Caminho para o CSV do dataset (padrão: data/dataset1.csv)",
     )
     parser.add_argument(
         "--max_depth",
