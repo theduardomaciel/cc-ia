@@ -30,11 +30,19 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, export_text
 
+try:
+    from activity1.common import get_data_path, save_metrics_csv
+except Exception:
+    import sys as _sys, os as _os
 
-# Caminho padrão do dataset: volta dois níveis (de question3/ para raiz) e entra em data/
-DEFAULT_DATASET_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "data", "dataset2.csv")
-)
+    _sys.path.append(
+        _os.path.abspath(_os.path.join(_os.path.dirname(__file__), "..", ".."))
+    )
+    from activity1.common import get_data_path, save_metrics_csv
+
+
+# Caminho padrão robusto resolvido a partir da raiz do repositório
+DEFAULT_DATASET_PATH = get_data_path("dataset2.csv")
 
 
 @dataclass
@@ -156,46 +164,7 @@ def generate_rules(art: ModelArtifacts, max_rules: int | None = 30) -> List[str]
     return rules_str
 
 
-def save_metrics_csv(
-    y_true: pd.Series,
-    y_pred: np.ndarray,
-    labels: List[str],
-    out_dir: str,
-    prefix: str,
-) -> tuple[str, str]:
-    """Salva relatório de classificação e matriz de confusão em CSVs.
-
-    Retorna os caminhos (report_csv_path, cm_csv_path).
-    """
-    # Relatório de classificação
-    try:
-        report_dict = classification_report(
-            y_true, y_pred, labels=labels, output_dict=True, digits=6, zero_division=0
-        )
-        report_df = pd.DataFrame(report_dict).transpose()
-        report_csv_path = os.path.join(out_dir, f"metrics_{prefix}.csv")
-        report_df.to_csv(report_csv_path, index=True)
-        print(f"Relatório de classificação salvo em: {report_csv_path}")
-    except Exception as e:
-        report_csv_path = ""
-        print(f"Aviso: não foi possível salvar metrics_{prefix}.csv: {e}")
-
-    # Matriz de confusão
-    try:
-        cm = confusion_matrix(y_true, y_pred, labels=labels)
-        cm_df = pd.DataFrame(
-            cm,
-            index=[f"true_{l}" for l in labels],
-            columns=[f"pred_{l}" for l in labels],
-        )
-        cm_csv_path = os.path.join(out_dir, f"confusion_matrix_{prefix}.csv")
-        cm_df.to_csv(cm_csv_path, index=True)
-        print(f"Matriz de confusão salva em: {cm_csv_path}")
-    except Exception as e:
-        cm_csv_path = ""
-        print(f"Aviso: não foi possível salvar confusion_matrix_{prefix}.csv: {e}")
-
-    return report_csv_path, cm_csv_path
+# save_metrics_csv agora é importado de activity1.common.report
 
 
 def save_tree_artifacts(art: ModelArtifacts, tree_txt: str) -> None:

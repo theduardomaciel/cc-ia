@@ -58,3 +58,13 @@ Para usar este dataset de forma eficaz, é importante que os cientistas se famil
 #### Link do dataset
 
 [https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention](https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention)
+
+### Como executar (neste projeto)
+
+```
+python activity1/question3/main.py [--data <csv>] [--max_depth 5] [--no_save]
+```
+
+Saídas quando não usa `--no_save` (diretório da questão):
+- `tree.txt`, `tree.dot`, `tree.png`
+- `metrics_train.csv`, `metrics_test.csv` (classification_report)

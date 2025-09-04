@@ -37,13 +37,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+try:
+    from activity1.common import get_repo_root, get_data_path
+except Exception:
+    import sys as _sys, os as _os
 
-# Caminho padrão do dataset: diretório raiz do projeto (..\..\..\..\data\dataset1.csv a partir deste arquivo)
-DEFAULT_DATASET_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
-    "data",
-    "dataset1.csv",
-)
+    _sys.path.append(
+        _os.path.abspath(_os.path.join(_os.path.dirname(__file__), "..", "..", ".."))
+    )
+    from activity1.common import get_repo_root, get_data_path
+
+
+DEFAULT_DATASET_PATH = get_data_path("dataset1.csv")
 
 
 # ---------------------------
@@ -527,11 +532,9 @@ def main():
     args = parser.parse_args()
 
     csv_path = args.data
-    # Se for relativo, resolvemos a partir da raiz do repositório (3 níveis acima do diretório deste arquivo)
     if not os.path.isabs(csv_path):
-        csv_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "..", csv_path)
-        )
+        repo_root = get_repo_root(__file__)
+        csv_path = os.path.abspath(os.path.join(repo_root, csv_path))
 
     print(f"Lendo dataset: {csv_path}")
     df = pd.read_csv(csv_path)

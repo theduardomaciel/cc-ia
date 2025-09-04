@@ -1,9 +1,0 @@
-===== Regras (PRISM) =====
-[1] IF ram = (1205.75, 2127.0] AND n_cores = 1 AND px_height = (576.0, 958.5] THEN Target = 1 (precisão=1.000, pos=17, total=17)
-[2] IF ram = (1205.75, 2127.0] AND n_cores = 1 AND px_height = (576.0, 958.5] THEN Target = 1 (precisão=1.000, pos=17, total=17)
-[3] IF ram = (2127.0, 3049.5] AND int_memory = (1.999, 16.0] AND sc_w = (2.0, 5.0] AND three_g = 1 THEN Target = 2 (precisão=1.000, pos=20, total=20)
-[4] IF ram = (2127.0, 3049.5] AND int_memory = (1.999, 16.0] AND sc_w = (2.0, 5.0] AND three_g = 1 THEN Target = 2 (precisão=1.000, pos=20, total=20)
-[5] IF ram = (255.999, 1205.75] AND battery_power = (842.0, 1222.5] AND blue = 1 THEN Target = 0 (precisão=1.000, pos=42, total=42)
-[6] IF ram = (255.999, 1205.75] AND battery_power = (842.0, 1222.5] AND blue = 1 THEN Target = 0 (precisão=1.000, pos=42, total=42)
-[7] IF ram = (3049.5, 3998.0] AND battery_power = (1615.0, 1998.0] AND three_g = 1 THEN Target = 3 (precisão=1.000, pos=65, total=65)
-[8] IF ram = (3049.5, 3998.0] AND battery_power = (1615.0, 1998.0] AND three_g = 1 THEN Target = 3 (precisão=1.000, pos=65, total=65)

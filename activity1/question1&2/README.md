@@ -1,5 +1,28 @@
 
-# Atividade 1: Questão 1
+<p align="center">
+	<img src="../.github/cover_light.png" alt="Capa" width="640" />
+</p>
+
+# Atividade 1 — Questões 1 e 2
+
+Árvores de decisão manuais para risco de crédito (dataset1.csv):
+- ID3 (ganho de informação)
+- C4.5 (Gain Ratio)
+- CART (Gini, splits binários)
+
+Scripts:
+- `id3/main.py` → gera `rules_id3.txt`, `tree_id3.dot`, `tree_id3.png`
+- `c4.5/main.py` → gera `rules_c45.txt`, `tree_c45.dot`, `tree_c45.png`
+- `cart/main.py` → gera `rules_cart.txt`, `tree_cart.dot`, `tree_cart.png`
+
+Como executar (exemplos):
+- `python activity1/question1\&2/id3/main.py --no_png --no_dot`
+- `python activity1/question1\&2/c4.5/main.py --no_png --no_dot`
+- `python activity1/question1\&2/cart/main.py --no_png --no_dot`
+
+Observações:
+- Os scripts imprimem, por nó, os cálculos detalhados (entropia/Gini, IG/GR, etc.).
+- O dataset padrão é resolvido automaticamente a partir da raiz do repositório.
 
 Considere a base de dados seguinte, supostamente fornecida pelo “gerente do banco”, realizando nela a seguinte ampliação:
 1. Aumentá-la para que contenha 6 atributos e 30 exemplos (E15, E16, …, E30), com a adição de 16 exemplos, distribuídos entre Risco = Baixo, Risco = Alto e Risco = Moderado

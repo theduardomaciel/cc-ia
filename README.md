@@ -1,25 +1,38 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./.github/cover.png">
+  <source media="(prefers-color-scheme: light)" srcset="./.github/cover_light.png">
+  <img alt="Inteligência Artificial" src="/.github/cover_light.png">
+</picture>
+
 # cc-ia
 
-## Atividade 1
+Repositório de atividades de Inteligência Artificial. A Atividade 1 implementa árvores de decisão e indução de regras sobre dois conjuntos de dados didáticos.
 
-Link para o dataset: [Predict students' dropout and academic success](https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention)
-Link para o dataset 2: [Mobile Price Classification](https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification)
+## Estrutura
 
-### Como executar
+- `activity1/`
+	- `common/`: utilitários compartilhados (paths, relatórios, etc.)
+	- `data/`: datasets de apoio (dataset1.csv, dataset2.csv)
+	- `question1&2/`: árvores ID3, C4.5 e CART para risco de crédito (dataset1)
+	- `question3/`: árvore de decisão (sklearn) para evasão/sucesso acadêmico (dataset2)
+	- `question4/`: indução de regras (PRISM) sobre o dataset2
 
-1) Crie e ative um ambiente virtual (opcional, mas recomendado).
-2) Instale dependências:
-	- pandas
-	- scikit-learn
-	- matplotlib (opcional para salvar imagem da árvore)
+## Preparação do ambiente
 
-3) Execute o script:
+1) (Opcional) Crie e ative um ambiente virtual.
+2) Instale dependências a partir de `requirements.txt`.
 
-```
-python activity1/main.py
-```
+## Como rodar
 
-Parâmetros úteis:
-- `--max_depth N` para controlar a profundidade da árvore (padrão 5).
-- `--data <caminho_csv>` para usar um CSV diferente (padrão `data/dataset.csv`).
-- `--no_save` para não salvar `rules.txt`, `tree.dot` e `tree.png`.
+- Questões 1 e 2 (árvores artesanais): ver `activity1/question1&2/README.md`.
+- Questão 3 (árvore sklearn): ver `activity1/question3/README.md`.
+- Questão 4 (PRISM): ver `activity1/question4/README.md`.
+
+Observações:
+- Os scripts resolvem o caminho do dataset automaticamente a partir da raiz do repo.
+- Artefatos da Questão 4 são gravados em `out/` na raiz do repositório.
+
+## Datasets
+
+- [Higher Education Predictors of Student Retention](https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention)
+- [Mobile Price Classification](https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification)

@@ -27,12 +27,18 @@ from typing import Any, Dict, List, Optional, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
+try:
+    from activity1.common import get_repo_root, get_data_path
+except Exception:
+    import sys as _sys, os as _os
 
-DEFAULT_DATASET_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
-    "data",
-    "dataset1.csv",
-)
+    _sys.path.append(
+        _os.path.abspath(_os.path.join(_os.path.dirname(__file__), "..", "..", ".."))
+    )
+    from activity1.common import get_repo_root, get_data_path
+
+
+DEFAULT_DATASET_PATH = get_data_path("dataset1.csv")
 
 
 def entropy(class_counts: Dict[str, int]) -> float:
@@ -382,10 +388,7 @@ def main():
 
     csv_path = args.data
     if not os.path.isabs(csv_path):
-        # Sobe três níveis a partir de .../activity1/question1/c4.5 -> raiz do repo (cc-ia)
-        repo_root = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "..")
-        )
+        repo_root = get_repo_root(__file__)
         csv_path = os.path.abspath(os.path.join(repo_root, csv_path))
 
     print(f"Lendo dataset: {csv_path}")

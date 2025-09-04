@@ -24,19 +24,24 @@ from typing import Dict, List, Tuple, Optional
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
+
+try:
+    from activity1.common import get_data_path, get_repo_root
+    from activity1.common.report import save_classification_report_csv
+except Exception:
+    import sys as _sys, os as _os
+
+    _sys.path.append(
+        _os.path.abspath(_os.path.join(_os.path.dirname(__file__), "..", ".."))
+    )
+    from activity1.common import get_data_path, get_repo_root
+    from activity1.common.report import save_classification_report_csv
 
 
 def _default_dataset_path() -> str:
-    # activity1/question4 -> .. (activity1) -> .. (raiz) / data / dataset2.csv
-    here = os.path.dirname(__file__)
-    candidate = os.path.abspath(os.path.join(here, "..", "..", "data", "dataset2.csv"))
-    if os.path.exists(candidate):
-        return candidate
-    # fallback: tentar activity1/data (caso estrutura mude)
-    alt = os.path.abspath(os.path.join(here, "..", "data", "dataset2.csv"))
-    return alt
+    return get_data_path("dataset2.csv")
 
 
 DEFAULT_DATASET_PATH = _default_dataset_path()
@@ -79,6 +84,11 @@ class PrismClassifier:
         self.rules_: List[Rule] = []
         self.default_class_: Optional[str] = None
         self.columns_: List[str] = []
+        # Mapeamentos de discretização aprendidos no fit
+        # Para colunas numéricas discretizadas: col -> array de edges (np.ndarray)
+        self._bin_edges_: Dict[str, Optional[np.ndarray]] = {}
+        # Colunas tratadas como categóricas (apenas coerção para str)
+        self._categorical_cols_: set[str] = set()
 
     # ---------- Pré-processamento (discretização e coerção para strings) ----------
     def _discretize_dataframe(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -101,6 +111,139 @@ class PrismClassifier:
             Xd[col] = Xd[col].fillna("NA").astype(str)
         return Xd
 
+    # ---------- Nova discretização consistente (fit/transform) ----------
+    def _compute_bin_edges(self, s: pd.Series, q: int) -> Optional[np.ndarray]:
+        """Calcula edges de bins baseados em quantis estáveis para uso posterior com pd.cut.
+
+        Retorna None se não houver variação suficiente para discretizar.
+        """
+        s_no_nan = pd.to_numeric(s, errors="coerce")
+        # usar mediana numérica para preencher NaN
+        med = float(np.nanmedian(s_no_nan.to_numpy(dtype=float)))
+        s_no_nan = s_no_nan.fillna(med)
+        unique_vals = s_no_nan.dropna().nunique()
+        nbins = int(min(max(1, unique_vals), max(1, q)))
+        if nbins <= 1:
+            return None
+        # edges com nbins intervalos -> nbins+1 pontos
+        probs = np.linspace(0.0, 1.0, nbins + 1)
+        try:
+            arr = s_no_nan.to_numpy(dtype=float)
+            edges = np.quantile(arr, probs)
+        except Exception:
+            return None
+        edges = np.unique(edges)
+        if len(edges) <= 2:  # menos que 2 intervalos úteis
+            return None
+        return edges
+
+    def _fit_discretizer(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Ajusta bins no treino e retorna X transformado em categorias (strings)."""
+        Xd = pd.DataFrame(index=X.index)
+        self._bin_edges_.clear()
+        self._categorical_cols_.clear()
+        for col in X.columns:
+            s = X[col]
+            if s.dtype.kind in ("f",):
+                edges = self._compute_bin_edges(s, self.max_bins)
+                self._bin_edges_[col] = edges
+                if edges is not None:
+                    med = float(
+                        np.nanmedian(
+                            pd.to_numeric(s, errors="coerce").to_numpy(dtype=float)
+                        )
+                    )
+                    Xd[col] = pd.cut(
+                        pd.to_numeric(s, errors="coerce").fillna(med),
+                        bins=list(
+                            map(
+                                float,
+                                (
+                                    edges.tolist()
+                                    if hasattr(edges, "tolist")
+                                    else list(edges)
+                                ),
+                            )
+                        ),
+                        include_lowest=True,
+                    ).astype(str)
+                else:
+                    Xd[col] = s.astype(str)
+                    self._categorical_cols_.add(col)
+            elif s.dtype.kind in ("i", "u"):
+                nunique = s.nunique(dropna=True)
+                if nunique > self.max_bins * 2:
+                    edges = self._compute_bin_edges(s.astype(float), self.max_bins)
+                    self._bin_edges_[col] = edges
+                    if edges is not None:
+                        med = float(
+                            np.nanmedian(
+                                pd.to_numeric(s, errors="coerce").to_numpy(dtype=float)
+                            )
+                        )
+                        Xd[col] = pd.cut(
+                            pd.to_numeric(s, errors="coerce").astype(float).fillna(med),
+                            bins=list(
+                                map(
+                                    float,
+                                    (
+                                        edges.tolist()
+                                        if hasattr(edges, "tolist")
+                                        else list(edges)
+                                    ),
+                                )
+                            ),
+                            include_lowest=True,
+                        ).astype(str)
+                    else:
+                        Xd[col] = s.astype("Int64").astype(str)
+                        self._categorical_cols_.add(col)
+                else:
+                    self._bin_edges_[col] = None
+                    Xd[col] = s.astype("Int64").astype(str)
+                    self._categorical_cols_.add(col)
+            else:
+                self._bin_edges_[col] = None
+                self._categorical_cols_.add(col)
+                Xd[col] = s.astype(str)
+            Xd[col] = Xd[col].fillna("NA").astype(str)
+        return Xd
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Transforma novos dados usando bins aprendidos no fit (consistente entre treino/teste)."""
+        if not self.columns_:
+            # fallback para comportamento antigo
+            return self._discretize_dataframe(X)
+        X = X.copy()
+        Xd = pd.DataFrame(index=X.index)
+        for col in self.columns_:
+            if col not in X.columns:
+                # coluna ausente: preencher com NA
+                Xd[col] = "NA"
+                continue
+            s = X[col]
+            edges = self._bin_edges_.get(col)
+            if edges is not None:
+                med = float(
+                    np.nanmedian(
+                        pd.to_numeric(s, errors="coerce").to_numpy(dtype=float)
+                    )
+                )
+                Xd[col] = pd.cut(
+                    pd.to_numeric(s, errors="coerce").fillna(med),
+                    bins=list(
+                        map(
+                            float,
+                            edges.tolist() if hasattr(edges, "tolist") else list(edges),
+                        )
+                    ),
+                    include_lowest=True,
+                ).astype(str)
+            else:
+                Xd[col] = s.astype(str)
+            Xd[col] = Xd[col].fillna("NA").astype(str)
+        return Xd
+
     @staticmethod
     def _qcut_to_str_bins(s: pd.Series, q: int) -> pd.Series:
         s_no_nan = s.fillna(s.median() if pd.api.types.is_numeric_dtype(s) else 0)
@@ -118,8 +261,8 @@ class PrismClassifier:
 
     # ---------- Treinamento ----------
     def fit(self, X: pd.DataFrame, y: pd.Series):
-        # Discretizar para valores categóricos (strings)
-        Xd = self._discretize_dataframe(X)
+        # Discretizar para valores categóricos (strings) e salvar bins
+        Xd = self._fit_discretizer(X)
         self.columns_ = list(Xd.columns)
         y = y.astype(str).reset_index(drop=True)
         Xd = Xd.reset_index(drop=True)
@@ -242,7 +385,8 @@ class PrismClassifier:
 
     # ---------- Predição ----------
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        Xd = self._discretize_dataframe(X)
+        # Usar bins aprendidos
+        Xd = self.transform(X)
         preds: List[str] = []
         for i in range(len(Xd)):
             row = Xd.iloc[i]
@@ -296,7 +440,8 @@ def save_rules_application(
 ) -> None:
     rows_rule_idx: List[Optional[int]] = []
     rows_rule_text: List[str] = []
-    Xd = clf._discretize_dataframe(X)
+    # Usar transformação consistente com o treino
+    Xd = clf.transform(X)
     for i in range(len(Xd)):
         row = Xd.iloc[i]
         idx_used: Optional[int] = None
@@ -321,46 +466,7 @@ def save_rules_application(
         print(f"Aviso: não foi possível salvar '{out_csv}': {e}")
 
 
-def save_metrics_csv(
-    y_true: pd.Series,
-    y_pred: np.ndarray,
-    labels: List[str],
-    out_dir: str,
-    prefix: str,
-) -> Tuple[str, str]:
-    """Salva relatório de classificação e matriz de confusão em CSVs.
-
-    Retorna os caminhos (report_csv_path, cm_csv_path).
-    """
-    # Relatório de classificação
-    try:
-        report_dict = classification_report(
-            y_true, y_pred, labels=labels, output_dict=True, digits=6, zero_division=0
-        )
-        report_df = pd.DataFrame(report_dict).transpose()
-        report_csv_path = os.path.join(out_dir, f"metrics_{prefix}.csv")
-        report_df.to_csv(report_csv_path, index=True)
-        print(f"Relatório de classificação salvo em: {report_csv_path}")
-    except Exception as e:
-        report_csv_path = ""
-        print(f"Aviso: não foi possível salvar metrics_{prefix}.csv: {e}")
-
-    # Matriz de confusão
-    try:
-        cm = confusion_matrix(y_true, y_pred, labels=labels)
-        cm_df = pd.DataFrame(
-            cm,
-            index=[f"true_{l}" for l in labels],
-            columns=[f"pred_{l}" for l in labels],
-        )
-        cm_csv_path = os.path.join(out_dir, f"confusion_matrix_{prefix}.csv")
-        cm_df.to_csv(cm_csv_path, index=True)
-        print(f"Matriz de confusão salva em: {cm_csv_path}")
-    except Exception as e:
-        cm_csv_path = ""
-        print(f"Aviso: não foi possível salvar confusion_matrix_{prefix}.csv: {e}")
-
-    return report_csv_path, cm_csv_path
+## save_metrics_csv removido — utilizar activity1.common.report.save_metrics_csv
 
 
 def main():
@@ -398,6 +504,8 @@ def main():
 
     print("Carregando dados...")
     X, y = load_dataset(args.data, target_col=args.target)
+    out_dir = os.path.join(os.path.dirname(__file__), "out")
+    os.makedirs(out_dir, exist_ok=True)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=args.test_size, random_state=42, stratify=y
@@ -409,7 +517,6 @@ def main():
 
     rules_text = clf.rules_as_text()
     if not args.no_save:
-        out_dir = os.path.dirname(__file__)
         print_and_save_rules(rules_text, out_dir)
     else:
         print("\n===== Regras geradas (PRISM) =====")
@@ -425,18 +532,15 @@ def main():
     print("\nRelatório de classificação:")
     print(classification_report(y_test, y_pred, digits=3))
     labels = sorted(y.unique())
-    cm = confusion_matrix(y_test, y_pred, labels=labels)
-    print("Matriz de confusão (linhas=verdadeiro, colunas=previsto):")
-    header = "\t".join([" "] + labels)
-    print(header)
-    for i, row in enumerate(cm):
-        print("\t".join([labels[i]] + [str(v) for v in row]))
 
     if not args.no_save:
-        out_dir = os.path.dirname(__file__)
-        # Salvar métricas em CSV (treino e teste)
-        save_metrics_csv(y_train, clf.predict(X_train), labels, out_dir, prefix="train")
-        save_metrics_csv(y_test, y_pred, labels, out_dir, prefix="test")
+        # Salvar métricas em CSV (somente classification_report; sem matriz de confusão)
+        _ = save_classification_report_csv(
+            y_train, clf.predict(X_train), labels, out_dir, prefix="train"
+        )
+        _ = save_classification_report_csv(
+            y_test, y_pred, labels, out_dir, prefix="test"
+        )
 
         save_rules_application(
             X_train,
