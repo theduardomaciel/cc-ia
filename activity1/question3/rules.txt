@@ -1,122 +1,31 @@
-===== Árvore (texto) =====
-|--- Curricular units 2nd sem (approved) <= 3.50
-|   |--- Curricular units 2nd sem (approved) <= 1.50
-|   |   |--- Curricular units 1st sem (enrolled) <= 0.50
-|   |   |   |--- Tuition fees up to date <= 0.50
-|   |   |   |   |--- Unemployment rate <= 12.55
-|   |   |   |   |   |--- weights: [12.00, 1.00, 0.00] class: Dropout
-|   |   |   |   |--- Unemployment rate >  12.55
-|   |   |   |   |   |--- weights: [3.00, 0.00, 2.00] class: Dropout
-|   |   |   |--- Tuition fees up to date >  0.50
-|   |   |   |   |--- Unemployment rate <= 14.70
-|   |   |   |   |   |--- weights: [30.00, 14.00, 54.00] class: Graduate
-|   |   |   |   |--- Unemployment rate >  14.70
-|   |   |   |   |   |--- weights: [13.00, 6.00, 4.00] class: Dropout
-|   |   |--- Curricular units 1st sem (enrolled) >  0.50
-|   |   |   |--- Mother's occupation <= 16.00
-|   |   |   |   |--- Curricular units 2nd sem (grade) <= 5.00
-|   |   |   |   |   |--- weights: [496.00, 24.00, 0.00] class: Dropout
-|   |   |   |   |--- Curricular units 2nd sem (grade) >  5.00
-|   |   |   |   |   |--- weights: [63.00, 18.00, 0.00] class: Dropout
-|   |   |   |--- Mother's occupation >  16.00
-|   |   |   |   |--- weights: [1.00, 6.00, 0.00] class: Enrolled
-|   |--- Curricular units 2nd sem (approved) >  1.50
-|   |   |--- Tuition fees up to date <= 0.50
-|   |   |   |--- GDP <= 1.76
-|   |   |   |   |--- weights: [51.00, 0.00, 0.00] class: Dropout
-|   |   |   |--- GDP >  1.76
-|   |   |   |   |--- Curricular units 2nd sem (credited) <= 1.50
-|   |   |   |   |   |--- weights: [9.00, 6.00, 0.00] class: Dropout
-|   |   |   |   |--- Curricular units 2nd sem (credited) >  1.50
-|   |   |   |   |   |--- weights: [6.00, 0.00, 0.00] class: Dropout
-|   |   |--- Tuition fees up to date >  0.50
-|   |   |   |--- Age at enrollment <= 26.50
-|   |   |   |   |--- Curricular units 1st sem (approved) <= 5.50
-|   |   |   |   |   |--- weights: [74.00, 124.00, 12.00] class: Enrolled
-|   |   |   |   |--- Curricular units 1st sem (approved) >  5.50
-|   |   |   |   |   |--- weights: [7.00, 10.00, 13.00] class: Graduate
-|   |   |   |--- Age at enrollment >  26.50
-|   |   |   |   |--- Curricular units 1st sem (grade) <= 12.83
-|   |   |   |   |   |--- weights: [30.00, 7.00, 5.00] class: Dropout
-|   |   |   |   |--- Curricular units 1st sem (grade) >  12.83
-|   |   |   |   |   |--- weights: [1.00, 3.00, 2.00] class: Enrolled
-|--- Curricular units 2nd sem (approved) >  3.50
-|   |--- Curricular units 2nd sem (approved) <= 5.50
-|   |   |--- Tuition fees up to date <= 0.50
-|   |   |   |--- GDP <= 1.90
-|   |   |   |   |--- Curricular units 1st sem (grade) <= 11.53
-|   |   |   |   |   |--- weights: [12.00, 0.00, 3.00] class: Dropout
-|   |   |   |   |--- Curricular units 1st sem (grade) >  11.53
-|   |   |   |   |   |--- weights: [35.00, 1.00, 0.00] class: Dropout
-|   |   |   |--- GDP >  1.90
-|   |   |   |   |--- Curricular units 1st sem (enrolled) <= 6.50
-|   |   |   |   |   |--- weights: [3.00, 13.00, 1.00] class: Enrolled
-|   |   |   |   |--- Curricular units 1st sem (enrolled) >  6.50
-|   |   |   |   |   |--- weights: [8.00, 0.00, 0.00] class: Dropout
-|   |   |--- Tuition fees up to date >  0.50
-|   |   |   |--- Curricular units 2nd sem (evaluations) <= 6.50
-|   |   |   |   |--- Curricular units 2nd sem (approved) <= 4.50
-|   |   |   |   |   |--- weights: [6.00, 13.00, 24.00] class: Graduate
-|   |   |   |   |--- Curricular units 2nd sem (approved) >  4.50
-|   |   |   |   |   |--- weights: [9.00, 12.00, 125.00] class: Graduate
-|   |   |   |--- Curricular units 2nd sem (evaluations) >  6.50
-|   |   |   |   |--- Curricular units 2nd sem (credited) <= 2.50
-|   |   |   |   |   |--- weights: [86.00, 192.00, 272.00] class: Graduate
-|   |   |   |   |--- Curricular units 2nd sem (credited) >  2.50
-|   |   |   |   |   |--- weights: [15.00, 1.00, 3.00] class: Dropout
-|   |--- Curricular units 2nd sem (approved) >  5.50
-|   |   |--- Curricular units 1st sem (evaluations) <= 8.50
-|   |   |   |--- Tuition fees up to date <= 0.50
-|   |   |   |   |--- Curricular units 2nd sem (evaluations) <= 7.50
-|   |   |   |   |   |--- weights: [1.00, 0.00, 7.00] class: Graduate
-|   |   |   |   |--- Curricular units 2nd sem (evaluations) >  7.50
-|   |   |   |   |   |--- weights: [3.00, 3.00, 1.00] class: Dropout
-|   |   |   |--- Tuition fees up to date >  0.50
-|   |   |   |   |--- Curricular units 2nd sem (without evaluations) <= 0.50
-|   |   |   |   |   |--- weights: [36.00, 43.00, 805.00] class: Graduate
-|   |   |   |   |--- Curricular units 2nd sem (without evaluations) >  0.50
-|   |   |   |   |   |--- weights: [2.00, 2.00, 4.00] class: Graduate
-|   |   |--- Curricular units 1st sem (evaluations) >  8.50
-|   |   |   |--- Tuition fees up to date <= 0.50
-|   |   |   |   |--- Age at enrollment <= 21.00
-|   |   |   |   |   |--- weights: [2.00, 0.00, 6.00] class: Graduate
-|   |   |   |   |--- Age at enrollment >  21.00
-|   |   |   |   |   |--- weights: [12.00, 4.00, 1.00] class: Dropout
-|   |   |   |--- Tuition fees up to date >  0.50
-|   |   |   |   |--- Curricular units 2nd sem (grade) <= 12.90
-|   |   |   |   |   |--- weights: [31.00, 71.00, 162.00] class: Graduate
-|   |   |   |   |--- Curricular units 2nd sem (grade) >  12.90
-|   |   |   |   |   |--- weights: [9.00, 21.00, 151.00] class: Graduate
-
-
 ===== Regras =====
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) <= 8.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (without evaluations) <= 0.500 THEN Target = Graduate (suporte=884)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (evaluations) > 6.500 AND Curricular units 2nd sem (credited) <= 2.500 THEN Target = Graduate (suporte=550)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) > 0.500 AND Mother's occupation <= 16.000 AND Curricular units 2nd sem (grade) <= 5.000 THEN Target = Dropout (suporte=520)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) > 8.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (grade) <= 12.904 THEN Target = Graduate (suporte=264)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date > 0.500 AND Age at enrollment <= 26.500 AND Curricular units 1st sem (approved) <= 5.500 THEN Target = Enrolled (suporte=210)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) > 8.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (grade) > 12.904 THEN Target = Graduate (suporte=181)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (evaluations) <= 6.500 AND Curricular units 2nd sem (approved) > 4.500 THEN Target = Graduate (suporte=146)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) <= 0.500 AND Tuition fees up to date > 0.500 AND Unemployment rate <= 14.700 THEN Target = Graduate (suporte=98)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) > 0.500 AND Mother's occupation <= 16.000 AND Curricular units 2nd sem (grade) > 5.000 THEN Target = Dropout (suporte=81)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date <= 0.500 AND GDP <= 1.765 THEN Target = Dropout (suporte=51)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (evaluations) <= 6.500 AND Curricular units 2nd sem (approved) <= 4.500 THEN Target = Graduate (suporte=43)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date > 0.500 AND Age at enrollment > 26.500 AND Curricular units 1st sem (grade) <= 12.833 THEN Target = Dropout (suporte=42)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date <= 0.500 AND GDP <= 1.905 AND Curricular units 1st sem (grade) > 11.528 THEN Target = Dropout (suporte=36)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date > 0.500 AND Age at enrollment <= 26.500 AND Curricular units 1st sem (approved) > 5.500 THEN Target = Graduate (suporte=30)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) <= 0.500 AND Tuition fees up to date > 0.500 AND Unemployment rate > 14.700 THEN Target = Dropout (suporte=23)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (evaluations) > 6.500 AND Curricular units 2nd sem (credited) > 2.500 THEN Target = Dropout (suporte=19)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date <= 0.500 AND GDP > 1.905 AND Curricular units 1st sem (enrolled) <= 6.500 THEN Target = Enrolled (suporte=17)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) > 8.500 AND Tuition fees up to date <= 0.500 AND Age at enrollment > 21.000 THEN Target = Dropout (suporte=17)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date <= 0.500 AND GDP > 1.765 AND Curricular units 2nd sem (credited) <= 1.500 THEN Target = Dropout (suporte=15)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date <= 0.500 AND GDP <= 1.905 AND Curricular units 1st sem (grade) <= 11.528 THEN Target = Dropout (suporte=15)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) <= 0.500 AND Tuition fees up to date <= 0.500 AND Unemployment rate <= 12.550 THEN Target = Dropout (suporte=13)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) <= 5.500 AND Tuition fees up to date <= 0.500 AND GDP > 1.905 AND Curricular units 1st sem (enrolled) > 6.500 THEN Target = Dropout (suporte=8)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) <= 8.500 AND Tuition fees up to date <= 0.500 AND Curricular units 2nd sem (evaluations) <= 7.500 THEN Target = Graduate (suporte=8)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) <= 8.500 AND Tuition fees up to date > 0.500 AND Curricular units 2nd sem (without evaluations) > 0.500 THEN Target = Graduate (suporte=8)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) > 8.500 AND Tuition fees up to date <= 0.500 AND Age at enrollment <= 21.000 THEN Target = Graduate (suporte=8)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) > 0.500 AND Mother's occupation > 16.000 THEN Target = Enrolled (suporte=7)
-IF Curricular units 2nd sem (approved) > 3.500 AND Curricular units 2nd sem (approved) > 5.500 AND Curricular units 1st sem (evaluations) <= 8.500 AND Tuition fees up to date <= 0.500 AND Curricular units 2nd sem (evaluations) > 7.500 THEN Target = Dropout (suporte=7)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date <= 0.500 AND GDP > 1.765 AND Curricular units 2nd sem (credited) > 1.500 THEN Target = Dropout (suporte=6)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) > 1.500 AND Tuition fees up to date > 0.500 AND Age at enrollment > 26.500 AND Curricular units 1st sem (grade) > 12.833 THEN Target = Enrolled (suporte=6)
-IF Curricular units 2nd sem (approved) <= 3.500 AND Curricular units 2nd sem (approved) <= 1.500 AND Curricular units 1st sem (enrolled) <= 0.500 AND Tuition fees up to date <= 0.500 AND Unemployment rate > 12.550 THEN Target = Dropout (suporte=5)
+IF ram <= 2231.500 AND ram <= 1077.500 AND px_height <= 1445.000 AND battery_power <= 1816.500 AND ram <= 1052.500 THEN Target = 0 (suporte=266)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power <= 1656.500 AND ram > 2370.000 AND px_height <= 1505.000 THEN Target = 2 (suporte=209)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power > 910.500 AND ram > 3251.000 AND ram > 3351.500 THEN Target = 3 (suporte=186)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power > 1108.500 AND ram <= 1900.500 AND px_height <= 1535.500 THEN Target = 1 (suporte=182)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power <= 1108.500 AND ram > 1534.500 AND px_height <= 1438.000 THEN Target = 1 (suporte=113)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power <= 1108.500 AND ram <= 1534.500 AND px_width <= 1488.500 THEN Target = 0 (suporte=57)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power <= 910.500 AND px_height > 579.500 AND px_width > 973.500 THEN Target = 3 (suporte=45)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power <= 910.500 AND px_height <= 579.500 AND ram <= 3818.000 THEN Target = 2 (suporte=42)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power > 1108.500 AND ram > 1900.500 AND px_width > 1069.000 THEN Target = 2 (suporte=39)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power > 910.500 AND ram <= 3251.000 AND px_width > 678.000 THEN Target = 3 (suporte=32)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power > 1656.500 AND px_width <= 1133.500 AND ram <= 2859.500 THEN Target = 2 (suporte=30)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power > 1656.500 AND px_width > 1133.500 AND ram > 2494.500 THEN Target = 3 (suporte=30)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power > 910.500 AND ram > 3251.000 AND ram <= 3351.500 THEN Target = 3 (suporte=27)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power > 1108.500 AND ram > 1900.500 AND px_width <= 1069.000 THEN Target = 1 (suporte=25)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power <= 1656.500 AND ram <= 2370.000 AND px_width <= 1175.000 THEN Target = 1 (suporte=23)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power <= 1656.500 AND ram <= 2370.000 AND px_width > 1175.000 THEN Target = 2 (suporte=23)
+IF ram <= 2231.500 AND ram <= 1077.500 AND px_height <= 1445.000 AND battery_power > 1816.500 AND px_width > 1180.000 THEN Target = 1 (suporte=21)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power <= 1108.500 AND ram <= 1534.500 AND px_width > 1488.500 THEN Target = 1 (suporte=21)
+IF ram <= 2231.500 AND ram <= 1077.500 AND px_height <= 1445.000 AND battery_power > 1816.500 AND px_width <= 1180.000 THEN Target = 0 (suporte=20)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power > 1656.500 AND px_width > 1133.500 AND ram <= 2494.500 THEN Target = 2 (suporte=19)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power > 1108.500 AND ram <= 1900.500 AND px_height > 1535.500 THEN Target = 2 (suporte=16)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power > 1656.500 AND px_width <= 1133.500 AND ram > 2859.500 THEN Target = 3 (suporte=13)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power <= 910.500 AND px_height <= 579.500 AND ram > 3818.000 THEN Target = 3 (suporte=12)
+IF ram <= 2231.500 AND ram <= 1077.500 AND px_height > 1445.000 AND ram > 632.500 THEN Target = 1 (suporte=10)
+IF ram <= 2231.500 AND ram <= 1077.500 AND px_height <= 1445.000 AND battery_power <= 1816.500 AND ram > 1052.500 THEN Target = 0 (suporte=9)
+IF ram > 2231.500 AND ram <= 3116.000 AND battery_power <= 1656.500 AND ram > 2370.000 AND px_height > 1505.000 THEN Target = 3 (suporte=9)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power <= 910.500 AND px_height > 579.500 AND px_width <= 973.500 THEN Target = 2 (suporte=6)
+IF ram <= 2231.500 AND ram <= 1077.500 AND px_height > 1445.000 AND ram <= 632.500 THEN Target = 0 (suporte=5)
+IF ram <= 2231.500 AND ram > 1077.500 AND battery_power <= 1108.500 AND ram > 1534.500 AND px_height > 1438.000 THEN Target = 2 (suporte=5)
+IF ram > 2231.500 AND ram > 3116.000 AND battery_power > 910.500 AND ram <= 3251.000 AND px_width <= 678.000 THEN Target = 2 (suporte=5)

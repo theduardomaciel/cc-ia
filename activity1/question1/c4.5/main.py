@@ -1,8 +1,8 @@
 """
-Árvore de decisão C4.5 (Gain Ratio) para o dataset2 (risco de crédito).
+Árvore de decisão C4.5 (Gain Ratio) para o dataset1 (risco de crédito).
 
 O script:
-- Lê data/dataset2.csv (classe: 'Risco', ignora coluna 'ID');
+- Lê data/dataset1.csv (classe: 'Risco', ignora coluna 'ID');
 - Constrói a árvore usando Gain Ratio (C4.5) para atributos categóricos;
 - Exibe no terminal os cálculos por nó: entropia do nó, IG, SplitInfo e GainRatio por atributo;
 - Gera DOT (tree_c45.dot) e PNG (tree_c45.png) com os valores no label dos nós.
@@ -11,7 +11,7 @@ Execução:
   python activity1/question1/c4.5/main.py
 
 Parâmetros opcionais:
-  --data <caminho_csv> (padrão: data/dataset2.csv)
+  --data <caminho_csv> (padrão: data/dataset1.csv)
   --no_png  (não salvar PNG)
   --no_dot  (não salvar DOT)
 """
@@ -31,7 +31,7 @@ import pandas as pd
 DEFAULT_DATASET_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
     "data",
-    "dataset2.csv",
+    "dataset1.csv",
 )
 
 
@@ -365,12 +365,12 @@ class C45DecisionTree:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Gera árvore C4.5 (Gain Ratio) para dataset2 com logs"
+        description="Gera árvore C4.5 (Gain Ratio) para dataset1 com logs"
     )
     parser.add_argument(
         "--data",
         default=DEFAULT_DATASET_PATH,
-        help="Caminho para o CSV (padrão: data/dataset2.csv)",
+        help="Caminho para o CSV (padrão: data/dataset1.csv)",
     )
     parser.add_argument(
         "--no_png", action="store_true", help="Não salvar PNG da árvore"

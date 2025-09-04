@@ -31,8 +31,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, export_text
 
 
-DEFAULT_DATASET_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "data", "dataset1.csv"
+# Caminho padrão do dataset: volta dois níveis (de question3/ para raiz) e entra em data/
+DEFAULT_DATASET_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "data", "dataset2.csv")
 )
 
 
@@ -44,6 +45,12 @@ class ModelArtifacts:
 
 
 def load_dataset(csv_path: str) -> Tuple[pd.DataFrame, pd.Series]:
+    csv_path = os.path.abspath(csv_path)
+    if not os.path.isfile(csv_path):
+        raise FileNotFoundError(
+            f"CSV não encontrado em: {csv_path}. "
+            "Ajuste o parâmetro --data ou verifique se 'data/dataset2.csv' existe na raiz do projeto."
+        )
     df = pd.read_csv(csv_path)
     if "Target" not in df.columns:
         raise ValueError("Coluna-alvo 'Target' não encontrada no dataset.")
@@ -149,18 +156,61 @@ def generate_rules(art: ModelArtifacts, max_rules: int | None = 30) -> List[str]
     return rules_str
 
 
-def save_artifacts(art: ModelArtifacts, tree_txt: str, rules: List[str]) -> None:
-    out_dir = os.path.dirname(__file__)
-    # Salva árvore textual e regras
-    rules_path = os.path.join(out_dir, "rules.txt")
-    with open(rules_path, "w", encoding="utf-8") as f:
-        f.write("===== Árvore (texto) =====\n")
-        f.write(tree_txt)
-        f.write("\n\n===== Regras =====\n")
-        f.write("\n".join(rules))
-    print(f"Regras e árvore salvas em: {rules_path}")
+def save_metrics_csv(
+    y_true: pd.Series,
+    y_pred: np.ndarray,
+    labels: List[str],
+    out_dir: str,
+    prefix: str,
+) -> tuple[str, str]:
+    """Salva relatório de classificação e matriz de confusão em CSVs.
 
-    # Salva DOT e PNG se possível
+    Retorna os caminhos (report_csv_path, cm_csv_path).
+    """
+    # Relatório de classificação
+    try:
+        report_dict = classification_report(
+            y_true, y_pred, labels=labels, output_dict=True, digits=6, zero_division=0
+        )
+        report_df = pd.DataFrame(report_dict).transpose()
+        report_csv_path = os.path.join(out_dir, f"metrics_{prefix}.csv")
+        report_df.to_csv(report_csv_path, index=True)
+        print(f"Relatório de classificação salvo em: {report_csv_path}")
+    except Exception as e:
+        report_csv_path = ""
+        print(f"Aviso: não foi possível salvar metrics_{prefix}.csv: {e}")
+
+    # Matriz de confusão
+    try:
+        cm = confusion_matrix(y_true, y_pred, labels=labels)
+        cm_df = pd.DataFrame(
+            cm,
+            index=[f"true_{l}" for l in labels],
+            columns=[f"pred_{l}" for l in labels],
+        )
+        cm_csv_path = os.path.join(out_dir, f"confusion_matrix_{prefix}.csv")
+        cm_df.to_csv(cm_csv_path, index=True)
+        print(f"Matriz de confusão salva em: {cm_csv_path}")
+    except Exception as e:
+        cm_csv_path = ""
+        print(f"Aviso: não foi possível salvar confusion_matrix_{prefix}.csv: {e}")
+
+    return report_csv_path, cm_csv_path
+
+
+def save_tree_artifacts(art: ModelArtifacts, tree_txt: str) -> None:
+    """Salva artefatos da árvore: texto, DOT e PNG."""
+    out_dir = os.path.dirname(__file__)
+    # Salva árvore textual separadamente
+    tree_txt_path = os.path.join(out_dir, "tree.txt")
+    try:
+        with open(tree_txt_path, "w", encoding="utf-8") as f:
+            f.write(tree_txt)
+        print(f"Árvore (texto) salva em: {tree_txt_path}")
+    except Exception as e:
+        print(f"Aviso: não foi possível salvar tree.txt: {e}")
+
+    # Salva DOT
     try:
         from sklearn.tree import export_graphviz
 
@@ -178,7 +228,7 @@ def save_artifacts(art: ModelArtifacts, tree_txt: str, rules: List[str]) -> None
     except Exception as e:
         print(f"Aviso: não foi possível salvar DOT da árvore: {e}")
 
-    # Plot PNG com matplotlib (opcional)
+    # Salva PNG
     try:
         import matplotlib.pyplot as plt
         from sklearn import tree as sktree
@@ -202,6 +252,19 @@ def save_artifacts(art: ModelArtifacts, tree_txt: str, rules: List[str]) -> None
         print(f"Aviso: não foi possível salvar a imagem da árvore: {e}")
 
 
+def save_rules_artifact(rules: List[str]) -> None:
+    """Salva apenas as regras em um arquivo separado."""
+    out_dir = os.path.dirname(__file__)
+    rules_path = os.path.join(out_dir, "rules.txt")
+    try:
+        with open(rules_path, "w", encoding="utf-8") as f:
+            f.write("===== Regras =====\n")
+            f.write("\n".join(rules))
+        print(f"Regras salvas em: {rules_path}")
+    except Exception as e:
+        print(f"Aviso: não foi possível salvar rules.txt: {e}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Árvore de decisão para prever evasão/sucesso acadêmico"
@@ -209,7 +272,7 @@ def main():
     parser.add_argument(
         "--data",
         default=DEFAULT_DATASET_PATH,
-        help="Caminho para o CSV do dataset (padrão: data/dataset1.csv)",
+        help="Caminho para o CSV do dataset (padrão: data/dataset2.csv)",
     )
     parser.add_argument(
         "--max_depth",
@@ -243,7 +306,15 @@ def main():
         print(r)
 
     if not args.no_save:
-        save_artifacts(art, tree_txt, rules)
+        save_tree_artifacts(art, tree_txt)
+        save_rules_artifact(rules)
+        # Salvar métricas em CSV (treino e teste)
+        out_dir = os.path.dirname(__file__)
+        labels = sorted(list(np.unique(y)))
+        _ = save_metrics_csv(
+            y_train, art.clf.predict(X_train), labels, out_dir, prefix="train"
+        )
+        _ = save_metrics_csv(y_test, y_pred, labels, out_dir, prefix="test")
 
 
 if __name__ == "__main__":

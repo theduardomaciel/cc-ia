@@ -1,8 +1,8 @@
 """
-Árvore de decisão CART (Gini, splits binários) para o dataset2 (risco de crédito).
+Árvore de decisão CART (Gini, splits binários) para o dataset1 (risco de crédito).
 
 O script:
-- Lê data/dataset2.csv (classe alvo: 'Risco', ignora coluna 'ID');
+- Lê data/dataset1.csv (classe alvo: 'Risco', ignora coluna 'ID');
 - Constrói a árvore com o algoritmo CART (impureza de Gini) suportando atributos numéricos e categóricos;
   - para atributos numéricos testa thresholds entre valores adjacentes;
   - para atributos categóricos testa splits binários do tipo (attr == valor) vs (attr != valor);
@@ -18,7 +18,7 @@ Execução:
     python activity1/question1/cart/main.py
 
 Parâmetros opcionais:
-  --data <caminho_csv> (padrão: data/dataset2.csv)
+  --data <caminho_csv> (padrão: data/dataset1.csv)
   --no_png (não salvar PNG)
   --no_dot (não salvar DOT)
 
@@ -38,11 +38,11 @@ import numpy as np
 import pandas as pd
 
 
-# Caminho padrão do dataset: diretório raiz do projeto (..\..\..\..\data\dataset2.csv a partir deste arquivo)
+# Caminho padrão do dataset: diretório raiz do projeto (..\..\..\..\data\dataset1.csv a partir deste arquivo)
 DEFAULT_DATASET_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
     "data",
-    "dataset2.csv",
+    "dataset1.csv",
 )
 
 
@@ -511,12 +511,12 @@ class CARTDecisionTree:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Gera árvore CART para dataset2 com logs de cálculos"
+        description="Gera árvore CART para dataset1 com logs de cálculos"
     )
     parser.add_argument(
         "--data",
         default=DEFAULT_DATASET_PATH,
-        help="Caminho para o CSV (padrão: data/dataset2.csv)",
+        help="Caminho para o CSV (padrão: data/dataset1.csv)",
     )
     parser.add_argument(
         "--no_png", action="store_true", help="Não salvar PNG da árvore"

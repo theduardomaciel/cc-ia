@@ -1,8 +1,8 @@
 """
-Árvore de decisão ID3 para o dataset2 (risco de crédito).
+Árvore de decisão ID3 para o dataset1 (risco de crédito).
 
 O script:
-- Lê data/dataset2.csv (classe alvo: 'Risco', ignora coluna 'ID');
+- Lê data/dataset1.csv (classe alvo: 'Risco', ignora coluna 'ID');
 - Constrói a árvore com ID3 (ganho de informação/entropia) para atributos categóricos;
 - Exibe no terminal TODOS os cálculos por nó:
   - distribuição de classes, entropia do nó;
@@ -16,7 +16,7 @@ Execução:
   python activity1/question1/main.py
 
 Parâmetros opcionais:
-  --data <caminho_csv> (padrão: data/dataset2.csv)
+  --data <caminho_csv> (padrão: data/dataset1.csv)
   --no_png (não salvar PNG)
   --no_dot (não salvar DOT)
 
@@ -36,7 +36,7 @@ import pandas as pd
 
 
 DEFAULT_DATASET_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "dataset2.csv"
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "dataset1.csv"
 )
 
 
@@ -417,12 +417,12 @@ class ID3DecisionTree:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Gera árvore ID3 para dataset2 com logs de cálculos"
+        description="Gera árvore ID3 para dataset1 com logs de cálculos"
     )
     parser.add_argument(
         "--data",
         default=DEFAULT_DATASET_PATH,
-        help="Caminho para o CSV (padrão: data/dataset2.csv)",
+        help="Caminho para o CSV (padrão: data/dataset1.csv)",
     )
     parser.add_argument(
         "--no_png", action="store_true", help="Não salvar PNG da árvore"

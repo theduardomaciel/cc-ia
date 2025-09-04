@@ -3,6 +3,7 @@
 ## Atividade 1
 
 Link para o dataset: [Predict students' dropout and academic success](https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention)
+Link para o dataset 2: [Mobile Price Classification](https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification)
 
 ### Como executar
 

@@ -29,13 +29,13 @@ from sklearn.model_selection import train_test_split
 
 
 def _default_dataset_path() -> str:
-    # activity1/question4 -> .. (activity1) -> .. (raiz) / data / dataset1.csv
+    # activity1/question4 -> .. (activity1) -> .. (raiz) / data / dataset2.csv
     here = os.path.dirname(__file__)
-    candidate = os.path.abspath(os.path.join(here, "..", "..", "data", "dataset1.csv"))
+    candidate = os.path.abspath(os.path.join(here, "..", "..", "data", "dataset2.csv"))
     if os.path.exists(candidate):
         return candidate
     # fallback: tentar activity1/data (caso estrutura mude)
-    alt = os.path.abspath(os.path.join(here, "..", "data", "dataset1.csv"))
+    alt = os.path.abspath(os.path.join(here, "..", "data", "dataset2.csv"))
     return alt
 
 
@@ -321,6 +321,48 @@ def save_rules_application(
         print(f"Aviso: não foi possível salvar '{out_csv}': {e}")
 
 
+def save_metrics_csv(
+    y_true: pd.Series,
+    y_pred: np.ndarray,
+    labels: List[str],
+    out_dir: str,
+    prefix: str,
+) -> Tuple[str, str]:
+    """Salva relatório de classificação e matriz de confusão em CSVs.
+
+    Retorna os caminhos (report_csv_path, cm_csv_path).
+    """
+    # Relatório de classificação
+    try:
+        report_dict = classification_report(
+            y_true, y_pred, labels=labels, output_dict=True, digits=6, zero_division=0
+        )
+        report_df = pd.DataFrame(report_dict).transpose()
+        report_csv_path = os.path.join(out_dir, f"metrics_{prefix}.csv")
+        report_df.to_csv(report_csv_path, index=True)
+        print(f"Relatório de classificação salvo em: {report_csv_path}")
+    except Exception as e:
+        report_csv_path = ""
+        print(f"Aviso: não foi possível salvar metrics_{prefix}.csv: {e}")
+
+    # Matriz de confusão
+    try:
+        cm = confusion_matrix(y_true, y_pred, labels=labels)
+        cm_df = pd.DataFrame(
+            cm,
+            index=[f"true_{l}" for l in labels],
+            columns=[f"pred_{l}" for l in labels],
+        )
+        cm_csv_path = os.path.join(out_dir, f"confusion_matrix_{prefix}.csv")
+        cm_df.to_csv(cm_csv_path, index=True)
+        print(f"Matriz de confusão salva em: {cm_csv_path}")
+    except Exception as e:
+        cm_csv_path = ""
+        print(f"Aviso: não foi possível salvar confusion_matrix_{prefix}.csv: {e}")
+
+    return report_csv_path, cm_csv_path
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Questão 4 - Indução de Regras (PRISM)"
@@ -328,7 +370,7 @@ def main():
     parser.add_argument(
         "--data",
         default=DEFAULT_DATASET_PATH,
-        help="Caminho para o CSV do dataset (padrão: data/dataset1.csv)",
+        help="Caminho para o CSV do dataset (padrão: data/dataset2.csv)",
     )
     parser.add_argument(
         "--target",
@@ -382,8 +424,8 @@ def main():
     print(f"Acurácia: {acc:.4f}")
     print("\nRelatório de classificação:")
     print(classification_report(y_test, y_pred, digits=3))
-    cm = confusion_matrix(y_test, y_pred, labels=sorted(y.unique()))
     labels = sorted(y.unique())
+    cm = confusion_matrix(y_test, y_pred, labels=labels)
     print("Matriz de confusão (linhas=verdadeiro, colunas=previsto):")
     header = "\t".join([" "] + labels)
     print(header)
@@ -392,6 +434,10 @@ def main():
 
     if not args.no_save:
         out_dir = os.path.dirname(__file__)
+        # Salvar métricas em CSV (treino e teste)
+        save_metrics_csv(y_train, clf.predict(X_train), labels, out_dir, prefix="train")
+        save_metrics_csv(y_test, y_pred, labels, out_dir, prefix="test")
+
         save_rules_application(
             X_train,
             y_train,

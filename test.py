@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier, export_text
 
 # Carregar dataset
-data = pd.read_csv("./data/dataset2.csv")  # supondo que salvou em CSV
+data = pd.read_csv("./data/dataset1.csv")  # supondo que salvou em CSV
 X = data.drop(columns=["ID", "Risco"])
 y = data["Risco"]
 
