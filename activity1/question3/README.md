@@ -1,6 +1,6 @@
 # Atividade 1: Questão 3 — Árvore de decisão (Mobile Price Classification)
 
-Considerando a base de dados "[Mobile Price Classification](https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification)", gere e apresente uma árvore de decisão e as regras correspondentes. Também avalie o modelo (acurácia e outras métricas).
+Considerando a base de dados [Mobile Price Classification](https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification), gere e apresente uma árvore de decisão e as regras correspondentes. Também avalie o modelo (acurácia e outras métricas).
 
 Problema: prever a faixa de preço (`price_range`, classes 0–3) a partir de atributos numéricos do dispositivo.
 
@@ -28,7 +28,7 @@ Exemplos:
 - Exibe acurácia, classification report e matriz de confusão.
 - Mostra a árvore em texto e gera regras IF-THEN por folha, ordenadas por suporte.
 
-## Saídas geradas (quando não usa `--no_save`)
+## Saídas gerada
 Arquivos salvos em `activity1/question3/`:
 - `tree.txt`: representação textual da árvore.
 - `tree.dot`: grafo da árvore em DOT (para Graphviz, opcional).

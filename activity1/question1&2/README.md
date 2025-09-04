@@ -11,9 +11,9 @@ Scripts:
 - `cart/main.py` → gera `rules_cart.txt`, `tree_cart.dot`, `tree_cart.png`
 
 Como executar (exemplos):
-- `python activity1/question1\&2/id3/main.py --no_png --no_dot`
-- `python activity1/question1\&2/c4.5/main.py --no_png --no_dot`
-- `python activity1/question1\&2/cart/main.py --no_png --no_dot`
+- `python activity1/question1&2/id3/main.py`
+- `python activity1/question1&2/c4.5/main.py`
+- `python activity1/question1&2/cart/main.py`
 
 Observações:
 - Os scripts imprimem, por nó, os cálculos detalhados (entropia/Gini, IG/GR, etc.).
