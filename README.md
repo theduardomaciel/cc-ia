@@ -24,13 +24,12 @@ Repositório de atividades de Inteligência Artificial. A Atividade 1 implementa
 
 ## Como rodar
 
-- Questões 1 e 2 (árvores artesanais): ver `activity1/question1&2/README.md`.
-- Questão 3 (árvore sklearn): ver `activity1/question3/README.md`.
-- Questão 4 (PRISM): ver `activity1/question4/README.md`.
+- Questões 1 e 2 (árvores artesanais): ver `[activity1/question1&2/README.md](./activity1//question1&2)`.
+- Questão 3 (árvore sklearn): ver `[activity1/question3/README.md](./activity1//question3)`.
+- Questão 4 (PRISM): ver `[activity1/question4/README.md](./activity1//question4)`.
 
 Observações:
 - Os scripts resolvem o caminho do dataset automaticamente a partir da raiz do repo.
-- Artefatos da Questão 4 são gravados em `out/` na raiz do repositório.
 
 ## Datasets
 
