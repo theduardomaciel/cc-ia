@@ -1,6 +1,5 @@
 """
-Considerando a base de dados "Predict students dropout and academic success", gere e apresente
-uma árvore de decisão e as regras correspondentes. Também avalie o modelo (acurácia e outras métricas).
+Considerando a base de dados "Mobile Price Classification", gere e apresente uma árvore de decisão e as regras correspondentes. Também avalie o modelo (acurácia e outras métricas).
 
 Este script:
 - Lê o CSV em data/dataset.csv;
@@ -9,8 +8,6 @@ Este script:
 - Exibe métricas (acurácia, relatório de classificação e matriz de confusão);
 - Mostra a árvore em formato textual e as regras IF-THEN por folha;
 - Opcionalmente salva visualizações e artefatos em activity1/ (tree.png, tree.dot, rules.txt).
-
-Execução rápida: python activity1/main.py
 """
 
 from __future__ import annotations

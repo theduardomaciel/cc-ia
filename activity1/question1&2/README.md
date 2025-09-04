@@ -1,8 +1,3 @@
-
-<p align="center">
-	<img src="../.github/cover_light.png" alt="Capa" width="640" />
-</p>
-
 # Atividade 1 — Questões 1 e 2
 
 Árvores de decisão manuais para risco de crédito (dataset1.csv):
@@ -49,7 +44,7 @@ Considere a base de dados seguinte, supostamente fornecida pelo “gerente do ba
 
 ### Nossa abordagem
 
-Primeiramente, ampliamos a base de dados original para que contivesse 6 atributos e 30 exemplos, conforme solicitado. A tabela abaixo apresenta a base de dados ampliada:
+Ampliamos a base de dados original para que contivesse 6 atributos e 30 exemplos, conforme solicitado. A tabela abaixo apresenta a base de dados ampliada:
 
 #### Atributos
 - História de Crédito: {Ruim, Desconhecida, Boa}
@@ -92,7 +87,3 @@ Primeiramente, ampliamos a base de dados original para que contivesse 6 atributo
 | E28 | Desconhecida        | Baixa  | Adequada | Acima de \$35k | Empregado    | Adulto | Baixo    |
 | E29 | Boa                 | Alta   | Nenhuma  | \$15 a \$35k   | Desempregado | Jovem  | Moderado |
 | E30 | Ruim                | Baixa  | Nenhuma  | Acima de \$35k | Empregado    | Sênior | Moderado |
-
-Em seguida, construímos manualmente três árvores de decisão utilizando os algoritmos ID3, C4.5 e CART. As árvores foram desenhadas à mão de forma digital e estão disponíveis como imagens anexadas a este documento.
-
-Após a construção das árvores de decisão, extraímos as bases de conhecimento com regras do tipo SE...ENTÃO... para cada uma das árvores. As regras extraídas são as seguintes:
