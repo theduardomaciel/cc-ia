@@ -1,0 +1,13 @@
+# Base de regras (CART) — alvo: Risco
+# Total de amostras de treino: 30
+Regra 1: SE Renda = $0 a $15k E Garantia = Adequada ENTÃO Risco = Moderado (n=1, suporte=3.33%, confiança=100.00%, dist=[Moderado:1])
+Regra 2: SE Renda = $0 a $15k E Garantia != Adequada E História de Crédito = Boa E Dívida = Alta ENTÃO Risco = Alto (n=1, suporte=3.33%, confiança=100.00%, dist=[Alto:1])
+Regra 3: SE Renda = $0 a $15k E Garantia != Adequada E História de Crédito = Boa E Dívida != Alta ENTÃO Risco = Moderado (n=1, suporte=3.33%, confiança=100.00%, dist=[Moderado:1])
+Regra 4: SE Renda = $0 a $15k E Garantia != Adequada E História de Crédito != Boa ENTÃO Risco = Alto (n=6, suporte=20.00%, confiança=100.00%, dist=[Alto:6])
+Regra 5: SE Renda != $0 a $15k E História de Crédito = Ruim E Dívida = Alta E Garantia = Adequada ENTÃO Risco = Moderado (n=1, suporte=3.33%, confiança=100.00%, dist=[Moderado:1])
+Regra 6: SE Renda != $0 a $15k E História de Crédito = Ruim E Dívida = Alta E Garantia != Adequada ENTÃO Risco = Alto (n=2, suporte=6.67%, confiança=100.00%, dist=[Alto:2])
+Regra 7: SE Renda != $0 a $15k E História de Crédito = Ruim E Dívida != Alta ENTÃO Risco = Moderado (n=3, suporte=10.00%, confiança=100.00%, dist=[Moderado:3])
+Regra 8: SE Renda != $0 a $15k E História de Crédito != Ruim E Garantia = Adequada ENTÃO Risco = Baixo (n=6, suporte=20.00%, confiança=100.00%, dist=[Baixo:6])
+Regra 9: SE Renda != $0 a $15k E História de Crédito != Ruim E Garantia != Adequada E Idade = Adulto E Dívida = Alta ENTÃO Risco = Alto (n=3, suporte=10.00%, confiança=66.67%, dist=[Alto:2, Baixo:1])
+Regra 10: SE Renda != $0 a $15k E História de Crédito != Ruim E Garantia != Adequada E Idade = Adulto E Dívida != Alta ENTÃO Risco = Baixo (n=3, suporte=10.00%, confiança=66.67%, dist=[Baixo:2, Moderado:1])
+Regra 11: SE Renda != $0 a $15k E História de Crédito != Ruim E Garantia != Adequada E Idade != Adulto ENTÃO Risco = Moderado (n=3, suporte=10.00%, confiança=100.00%, dist=[Moderado:3])

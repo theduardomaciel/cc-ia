@@ -133,6 +133,82 @@ class ID3DecisionTree:
     def fit(self, df: pd.DataFrame, features: List[str]) -> None:
         self.root = self._build(df, features, depth=0)
 
+    # -------------------
+    # Regras (base de regras)
+    # -------------------
+
+    def extract_rules(self) -> List[Dict[str, Any]]:
+        """Extrai regras SE-ENTÃO a partir dos caminhos raiz→folha.
+
+        Cada item possui:
+          - conditions: List[Tuple[attr, op, value]]
+          - predicted_class: str
+          - n: int (amostras na folha)
+          - class_counts: Dict[str, int]
+          - support: float (n/N_total)
+          - confidence: float (count(predicted_class)/n)
+        """
+        assert self.root is not None
+
+        rules: List[Dict[str, Any]] = []
+        N_total = max(1, self.root.samples)
+
+        def dfs(node: ID3Node, conditions: List[Tuple[str, str, Any]]):
+            if node.is_leaf():
+                n = node.samples
+                cc = node.class_counts
+                # Usa lambda para evitar ambiguidade de tipos no linter
+                y = node.predicted_class or (
+                    max(cc, key=lambda k: cc[k]) if cc else "?"
+                )
+                hits = cc.get(y, 0) if cc else 0
+                confidence = (hits / n) if n > 0 else 0.0
+                support = (n / N_total) if N_total > 0 else 0.0
+                rules.append(
+                    {
+                        "conditions": list(conditions),
+                        "predicted_class": y,
+                        "n": n,
+                        "class_counts": cc,
+                        "support": support,
+                        "confidence": confidence,
+                        "hits": hits,
+                    }
+                )
+                return
+            # nó interno
+            split_attr = node.split_attr
+            for val, ch in node.children.items():
+                cond = (split_attr or "?", "=", val)
+                dfs(ch, conditions + [cond])
+
+        dfs(self.root, [])
+        return rules
+
+    def export_rules_txt(self, out_path: str) -> None:
+        assert self.root is not None
+        rules = self.extract_rules()
+        lines: List[str] = []
+        lines.append(f"# Base de regras (ID3) — alvo: {self.target}")
+        lines.append(f"# Total de amostras de treino: {self.root.samples}")
+        for i, r in enumerate(rules, start=1):
+            conds = (
+                " E ".join([f"{a} {op} {v}" for (a, op, v) in r["conditions"]])
+                or "(sempre)"
+            )
+            cls = r["predicted_class"]
+            n = r["n"]
+            sup = r["support"] * 100.0
+            conf = r["confidence"] * 100.0
+            dist = ", ".join(f"{k}:{v}" for k, v in r["class_counts"].items())
+            lines.append(
+                f"Regra {i}: SE {conds} ENTÃO {self.target} = {cls} "
+                f"(n={n}, suporte={sup:.2f}%, confiança={conf:.2f}%, dist=[{dist}])"
+            )
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+
     def _build(self, df: pd.DataFrame, features: List[str], depth: int) -> ID3Node:
         counts = class_distribution(df, self.target)
         node_entropy = entropy(counts)
@@ -395,6 +471,11 @@ def main():
         png_path = os.path.join(out_dir, "tree_id3.png")
         tree.plot_png(png_path)
         print(f"PNG salvo em: {png_path}")
+
+    # Exporta base de regras
+    rules_path = os.path.join(out_dir, "rules_id3.txt")
+    tree.export_rules_txt(rules_path)
+    print(f"Regras salvas em: {rules_path}")
 
 
 if __name__ == "__main__":

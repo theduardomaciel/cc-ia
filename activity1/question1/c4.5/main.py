@@ -111,6 +111,65 @@ class C45DecisionTree:
     def fit(self, df: pd.DataFrame, features: List[str]) -> None:
         self.root = self._build(df, features, depth=0)
 
+    # -------------------
+    # Regras (base de regras)
+    # -------------------
+    def extract_rules(self) -> List[Dict[str, Any]]:
+        assert self.root is not None
+
+        rules: List[Dict[str, Any]] = []
+        N_total = max(1, self.root.samples)
+
+        def dfs(n: Node, conditions: List[Tuple[str, str, Any]]):
+            if n.is_leaf():
+                n_samples = n.samples
+                cc = n.class_counts
+                y = n.predicted_class or (max(cc, key=lambda k: cc[k]) if cc else "?")
+                hits = cc.get(y, 0) if cc else 0
+                confidence = (hits / n_samples) if n_samples > 0 else 0.0
+                support = (n_samples / N_total) if N_total > 0 else 0.0
+                rules.append(
+                    {
+                        "conditions": list(conditions),
+                        "predicted_class": y,
+                        "n": n_samples,
+                        "class_counts": cc,
+                        "support": support,
+                        "confidence": confidence,
+                        "hits": hits,
+                    }
+                )
+                return
+            split_attr = n.split_attr or "?"
+            for val, ch in n.children.items():
+                dfs(ch, conditions + [(split_attr, "=", val)])
+
+        dfs(self.root, [])
+        return rules
+
+    def export_rules_txt(self, out_path: str) -> None:
+        assert self.root is not None
+        rules = self.extract_rules()
+        lines: List[str] = []
+        lines.append(f"# Base de regras (C4.5) — alvo: {self.target}")
+        lines.append(f"# Total de amostras de treino: {self.root.samples}")
+        for i, r in enumerate(rules, start=1):
+            conds = (
+                " E ".join([f"{a} {op} {v}" for (a, op, v) in r["conditions"]])
+                or "(sempre)"
+            )
+            cls = r["predicted_class"]
+            n = r["n"]
+            sup = r["support"] * 100.0
+            conf = r["confidence"] * 100.0
+            dist = ", ".join(f"{k}:{v}" for k, v in r["class_counts"].items())
+            lines.append(
+                f"Regra {i}: SE {conds} ENTÃO {self.target} = {cls} (n={n}, suporte={sup:.2f}%, confiança={conf:.2f}%, dist=[{dist}])"
+            )
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+
     def _build(self, df: pd.DataFrame, features: List[str], depth: int) -> Node:
         counts = class_distribution(df, self.target)
         node_entropy = entropy(counts)
@@ -323,8 +382,9 @@ def main():
 
     csv_path = args.data
     if not os.path.isabs(csv_path):
+        # Sobe três níveis a partir de .../activity1/question1/c4.5 -> raiz do repo (cc-ia)
         repo_root = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
+            os.path.join(os.path.dirname(__file__), "..", "..", "..")
         )
         csv_path = os.path.abspath(os.path.join(repo_root, csv_path))
 
@@ -356,6 +416,11 @@ def main():
         png_path = os.path.join(out_dir, "tree_c45.png")
         tree.plot_png(png_path)
         print(f"PNG salvo em: {png_path}")
+
+    # Exporta base de regras
+    rules_path = os.path.join(out_dir, "rules_c45.txt")
+    tree.export_rules_txt(rules_path)
+    print(f"Regras salvas em: {rules_path}")
 
 
 if __name__ == "__main__":
