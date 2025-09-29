@@ -72,6 +72,5 @@ if (import.meta.env.DEV) {
   // Adiciona mais informações de debug conforme necessário
   return {
     controller,
-    // Adicione outros objetos úteis para debug
   };
 };
