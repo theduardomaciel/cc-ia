@@ -1,0 +1,28 @@
+{
+  "name": "question2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "npm:rolldown-vite@7.1.12"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:rolldown-vite@7.1.12"
+    },
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide"
+    ]
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "json-rules-engine": "^7.3.1",
+    "tailwindcss": "^4.1.13"
+  }
+}

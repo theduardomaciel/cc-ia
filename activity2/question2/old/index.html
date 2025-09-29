@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema Expert - Agente Baseado em Conhecimento</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center py-4">
+            <h1 class="text-2xl font-bold text-gray-900">Sistema Expert</h1>
+            <p class="text-sm text-gray-600">Agente Baseado em Conhecimento</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Navigation Tabs -->
+        <div class="border-b border-gray-200 mb-6">
+          <nav class="-mb-px flex space-x-8">
+            <button id="tab-knowledge" class="tab tab-active">
+              Base de Conhecimento
+            </button>
+            <button id="tab-inference" class="tab">
+              Motor de Inferência
+            </button>
+            <button id="tab-explanation" class="tab">
+              Sistema de Explanação
+            </button>
+            <button id="tab-dialog" class="tab">
+              Diálogo Natural
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="content">
+          <!-- Knowledge Base Tab -->
+          <div id="content-knowledge" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Rules Editor -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Editor de Regras</h3>
+                  <p class="text-sm text-gray-600">Adicione regras do tipo SE...ENTÃO</p>
+                </div>
+                <div class="card-content">
+                  <form id="rule-form" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Condição (SE)
+                      </label>
+                      <input type="text" id="rule-condition" class="input" 
+                             placeholder="Ex: animal tem penas">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Conclusão (ENTÃO)
+                      </label>
+                      <input type="text" id="rule-conclusion" class="input" 
+                             placeholder="Ex: animal é ave">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                      Adicionar Regra
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Facts Editor -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Editor de Fatos</h3>
+                  <p class="text-sm text-gray-600">Adicione fatos conhecidos</p>
+                </div>
+                <div class="card-content">
+                  <form id="fact-form" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Fato
+                      </label>
+                      <input type="text" id="fact-input" class="input" 
+                             placeholder="Ex: Tweety tem penas">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                      Adicionar Fato
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Rules List -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Regras Cadastradas</h3>
+                </div>
+                <div class="card-content">
+                  <ul id="rules-list" class="space-y-2">
+                    <!-- Rules will be dynamically added here -->
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Facts List -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Fatos Conhecidos</h3>
+                </div>
+                <div class="card-content">
+                  <ul id="facts-list" class="space-y-2">
+                    <!-- Facts will be dynamically added here -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inference Engine Tab -->
+          <div id="content-inference" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Query Input -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Consulta</h3>
+                  <p class="text-sm text-gray-600">Faça uma pergunta ao sistema</p>
+                </div>
+                <div class="card-content">
+                  <form id="query-form" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Pergunta
+                      </label>
+                      <input type="text" id="query-input" class="input" 
+                             placeholder="Ex: Tweety é ave?">
+                    </div>
+                    <div class="flex space-x-4">
+                      <button type="button" id="forward-btn" class="btn-primary">
+                        Encadeamento para Frente
+                      </button>
+                      <button type="button" id="backward-btn" class="btn-secondary">
+                        Encadeamento para Trás
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Results -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Resultado da Inferência</h3>
+                </div>
+                <div class="card-content">
+                  <div id="inference-result" class="min-h-[200px] p-4 bg-gray-50 rounded-md">
+                    <!-- Results will be displayed here -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Inference Steps -->
+              <div class="card lg:col-span-2">
+                <div class="card-header">
+                  <h3 class="card-title">Passos da Inferência</h3>
+                </div>
+                <div class="card-content">
+                  <div id="inference-steps" class="space-y-2">
+                    <!-- Inference steps will be displayed here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Explanation Tab -->
+          <div id="content-explanation" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Why Questions -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Por quê?</h3>
+                  <p class="text-sm text-gray-600">Explica por que uma conclusão foi alcançada</p>
+                </div>
+                <div class="card-content">
+                  <form id="why-form" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Conclusão para explicar
+                      </label>
+                      <input type="text" id="why-input" class="input" 
+                             placeholder="Ex: Tweety é ave">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                      Explicar Por Quê
+                    </button>
+                  </form>
+                  <div id="why-result" class="mt-4 p-4 bg-blue-50 rounded-md hidden">
+                    <!-- Why explanation will be displayed here -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- How Questions -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Como?</h3>
+                  <p class="text-sm text-gray-600">Explica como uma conclusão pode ser alcançada</p>
+                </div>
+                <div class="card-content">
+                  <form id="how-form" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Objetivo para explicar
+                      </label>
+                      <input type="text" id="how-input" class="input" 
+                             placeholder="Ex: Como provar que algo é ave?">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                      Explicar Como
+                    </button>
+                  </form>
+                  <div id="how-result" class="mt-4 p-4 bg-green-50 rounded-md hidden">
+                    <!-- How explanation will be displayed here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Natural Dialog Tab -->
+          <div id="content-dialog" class="tab-content hidden">
+            <div class="max-w-4xl mx-auto">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Diálogo em Linguagem Natural</h3>
+                  <p class="text-sm text-gray-600">Converse com o sistema em linguagem natural</p>
+                </div>
+                <div class="card-content">
+                  <!-- Chat Interface -->
+                  <div id="chat-messages" class="h-96 overflow-y-auto border border-gray-200 rounded-md p-4 mb-4 space-y-4">
+                    <!-- Chat messages will be displayed here -->
+                  </div>
+                  
+                  <form id="chat-form" class="flex space-x-4">
+                    <input type="text" id="chat-input" class="input flex-1" 
+                           placeholder="Digite sua pergunta em linguagem natural...">
+                    <button type="submit" class="btn-primary">
+                      Enviar
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

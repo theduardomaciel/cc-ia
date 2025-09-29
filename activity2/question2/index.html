@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema Especialista - Knowledge-Based Agent</title>
+  </head>
+  <body class="bg-gray-50">
+    <div id="app" class="min-h-screen">
+      <!-- Header -->
+      <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center py-4">
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Sistema Especialista</h1>
+              <p class="text-sm text-gray-600">Knowledge-Based Agent com Encadeamento para Frente e Trás</p>
+            </div>
+            <div id="system-stats" class="text-right">
+              <!-- Stats serão inseridas aqui -->
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex space-x-8">
+            <button id="tab-knowledge" class="tab-button py-4 px-1 border-b-2 font-medium text-sm bg-blue-600 text-white">
+              📚 Base de Conhecimento
+            </button>
+            <button id="tab-inference" class="tab-button py-4 px-1 border-b-2 font-medium text-sm bg-gray-200 text-gray-700">
+              ⚙️ Motor de Inferência
+            </button>
+            <button id="tab-explanation" class="tab-button py-4 px-1 border-b-2 font-medium text-sm bg-gray-200 text-gray-700">
+              🤔 Sistema de Explicação
+            </button>
+            <button id="tab-chat" class="tab-button py-4 px-1 border-b-2 font-medium text-sm bg-gray-200 text-gray-700">
+              💬 Chat em Linguagem Natural
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Knowledge Base Tab -->
+        <div id="content-knowledge" class="tab-content">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Rules Section -->
+            <div class="bg-white rounded-lg shadow p-6">
+              <h2 class="text-xl font-semibold mb-4">📋 Regras (SE...ENTÃO)</h2>
+              
+              <form id="rule-form" class="space-y-4 mb-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Regra (opcional)</label>
+                  <input 
+                    type="text" 
+                    id="rule-name" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ex: Verificação de Maioridade"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Condição (SE)</label>
+                  <input 
+                    type="text" 
+                    id="rule-condition" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ex: idade >= 18"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Conclusão (ENTÃO)</label>
+                  <input 
+                    type="text" 
+                    id="rule-conclusion" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ex: maior_de_idade"
+                    required
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  ➕ Adicionar Regra
+                </button>
+              </form>
+
+              <div class="flex gap-2 mb-4">
+                <button 
+                  id="load-example-rules"
+                  class="flex-1 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 text-sm"
+                >
+                  📚 Carregar Exemplos
+                </button>
+                <button 
+                  id="clear-kb"
+                  class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 text-sm"
+                >
+                  🗑️ Limpar Tudo
+                </button>
+              </div>
+
+              <div class="border-t pt-4">
+                <h3 class="font-medium mb-3">Regras Definidas</h3>
+                <div id="rules-list" class="space-y-3 max-h-96 overflow-y-auto">
+                  <!-- Rules will be inserted here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Facts Section -->
+            <div class="bg-white rounded-lg shadow p-6">
+              <h2 class="text-xl font-semibold mb-4">💎 Fatos</h2>
+              
+              <form id="fact-form" class="space-y-4 mb-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Fato</label>
+                  <input 
+                    type="text" 
+                    id="fact-name" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ex: idade"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+                  <input 
+                    type="text" 
+                    id="fact-value" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ex: 25"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                  <select 
+                    id="fact-type" 
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="string">Texto (string)</option>
+                    <option value="number">Número (number)</option>
+                    <option value="boolean">Verdadeiro/Falso (boolean)</option>
+                    <option value="object">Objeto (JSON)</option>
+                  </select>
+                </div>
+                <button 
+                  type="submit" 
+                  class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  ➕ Adicionar Fato
+                </button>
+              </form>
+
+              <div class="border-t pt-4">
+                <h3 class="font-medium mb-3">Fatos Definidos</h3>
+                <div id="facts-list" class="space-y-3 max-h-96 overflow-y-auto">
+                  <!-- Facts will be inserted here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inference Tab -->
+        <div id="content-inference" class="tab-content hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Controls -->
+            <div class="lg:col-span-1 space-y-6">
+              
+              <!-- Forward Chaining -->
+              <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">🔄 Encadeamento para Frente</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                  Deriva novos fatos a partir dos fatos conhecidos e regras ativas.
+                </p>
+                <button 
+                  id="forward-btn"
+                  class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  ▶️ Executar Forward Chaining
+                </button>
+              </div>
+
+              <!-- Backward Chaining -->
+              <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">🎯 Encadeamento para Trás</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                  Tenta provar um objetivo específico trabalhando para trás a partir das regras.
+                </p>
+                <form id="backward-form" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Objetivo a Provar</label>
+                    <input 
+                      type="text" 
+                      id="backward-goal" 
+                      class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ex: maior_de_idade"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    class="w-full bg-purple-600 text-white py-3 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    🎯 Executar Backward Chaining
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div class="lg:col-span-2">
+              <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">📊 Resultados da Inferência</h2>
+                <div id="inference-results" class="min-h-64">
+                  <div class="text-center text-gray-500 py-12">
+                    <p>Execute uma operação de inferência para ver os resultados aqui.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explanation Tab -->
+        <div id="content-explanation" class="tab-content hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Controls -->
+            <div class="lg:col-span-1 space-y-6">
+              
+              <!-- Why Explanation -->
+              <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">🤔 Por Quê?</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                  Explica por que um fato é verdadeiro ou como foi derivado.
+                </p>
+                <form id="why-form" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">O que explicar?</label>
+                    <input 
+                      type="text" 
+                      id="why-target" 
+                      class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ex: maior_de_idade"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    class="w-full bg-orange-600 text-white py-3 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  >
+                    🤔 Explicar Por Quê
+                  </button>
+                </form>
+              </div>
+
+              <!-- How Explanation -->
+              <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">🛠️ Como?</h2>
+                <p class="text-sm text-gray-600 mb-4">
+                  Mostra como obter um objetivo ou que passos são necessários.
+                </p>
+                <form id="how-form" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Objetivo a alcançar</label>
+                    <input 
+                      type="text" 
+                      id="how-goal" 
+                      class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ex: cliente_premium"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    class="w-full bg-teal-600 text-white py-3 px-4 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    🛠️ Explicar Como
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div class="lg:col-span-2">
+              <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">💡 Explicações</h2>
+                <div id="explanation-results" class="min-h-64">
+                  <div class="text-center text-gray-500 py-12">
+                    <p>Solicite uma explicação para ver os resultados aqui.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Tab -->
+        <div id="content-chat" class="tab-content hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <!-- Chat Messages -->
+            <div class="lg:col-span-3">
+              <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b">
+                  <h2 class="text-xl font-semibold">💬 Conversa em Linguagem Natural</h2>
+                  <p class="text-sm text-gray-600 mt-1">
+                    Converse com o sistema usando linguagem natural em português.
+                  </p>
+                </div>
+                
+                <div id="chat-messages" class="h-96 overflow-y-auto p-4 space-y-4">
+                  <!-- Chat messages will be inserted here -->
+                </div>
+                
+                <div class="border-t p-4">
+                  <form id="chat-form" class="flex gap-2">
+                    <input 
+                      type="text" 
+                      id="chat-input" 
+                      class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Digite sua mensagem... (ex: 'SE idade >= 18 ENTÃO maior_de_idade')"
+                      autocomplete="off"
+                    />
+                    <button 
+                      type="submit" 
+                      class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      📤 Enviar
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Help -->
+            <div class="lg:col-span-1">
+              <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-semibold mb-4">💡 Comandos do Chat</h3>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <strong>Adicionar Regras:</strong>
+                    <p class="text-gray-600">"SE idade >= 18 ENTÃO maior_de_idade"</p>
+                  </div>
+                  <div>
+                    <strong>Adicionar Fatos:</strong>
+                    <p class="text-gray-600">"idade = 25"</p>
+                  </div>
+                  <div>
+                    <strong>Consultas:</strong>
+                    <p class="text-gray-600">"É verdade que usuário é maior de idade?"</p>
+                  </div>
+                  <div>
+                    <strong>Explicações:</strong>
+                    <p class="text-gray-600">"Por que usuário é maior de idade?"</p>
+                  </div>
+                  <div>
+                    <strong>Ajuda:</strong>
+                    <p class="text-gray-600">"ajuda" ou "help"</p>
+                  </div>
+                </div>
+                
+                <button 
+                  id="clear-chat"
+                  class="w-full mt-4 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 text-sm"
+                >
+                  🗑️ Limpar Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
