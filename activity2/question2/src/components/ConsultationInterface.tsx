@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Send, MessageCircle, Bot, User, HelpCircle } from 'lucide-react';
+
+// Components
+import { Button } from '@/components/ui/button';
+
+// Libs
 import { NaturalLanguageProcessor } from '@/lib/natural-language-processor';
+import { formatTimestamp } from '@/lib/utils';
 
 interface Message {
     id: string;
@@ -89,13 +94,6 @@ export const ConsultationInterface: React.FC<ConsultationInterfaceProps> = ({
         setInput(action);
     };
 
-    const formatTimestamp = (date: Date): string => {
-        return date.toLocaleTimeString('pt-BR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
-
     const quickActions = [
         'ajuda',
         'Qual é o diagnóstico?',
@@ -135,8 +133,8 @@ export const ConsultationInterface: React.FC<ConsultationInterfaceProps> = ({
 
                         <div
                             className={`max-w-[70%] p-3 rounded-lg ${message.type === 'user'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-900'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-900'
                                 }`}
                         >
                             <div className="whitespace-pre-wrap">{message.content}</div>
