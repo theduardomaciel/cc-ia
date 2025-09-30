@@ -1,14 +1,5 @@
 # Documentação - Sistema Baseado em Regras Fuzzy
 
-## Atividade 2 - Questão 4 - Inteligência Artificial
-
-**Disciplina:** Inteligência Artificial  
-**Curso:** Ciência da Computação  
-**Ferramenta:** Scikit-Fuzzy  
-**Data:** Setembro 2025
-
----
-
 ## 1. Descrição dos Problemas
 
 ### 1.1 Sistema de Análise de Risco de Projetos de Software
@@ -141,10 +132,10 @@ SE temp_atual=quente E temp_desejada=baixa
 ### 3.1 Bibliotecas Utilizadas
 
 ```python
-import numpy as np              # Operações numéricas
-import matplotlib.pyplot as plt # Visualizações
-import skfuzzy as fuzz         # Lógica fuzzy
-from skfuzzy import control as ctrl # Sistema de controle
+import numpy as np                      # Operações numéricas
+import matplotlib.pyplot as plt         # Visualizações
+import skfuzzy as fuzz                  # Lógica fuzzy
+from skfuzzy import control as ctrl     # Sistema de controle
 ```
 
 ### 3.2 Estrutura do Código
@@ -210,20 +201,6 @@ As superfícies 3D demonstram:
 2. **Interpretabilidade:** Regras em linguagem natural
 3. **Robustez:** Lidando bem com entradas imprecisas
 4. **Suavidade:** Saídas graduais, não abruptas
-
----
-
-## 5. Aplicações Práticas
-
-### 5.1 Sistema de Análise de Risco
-- **Gestão de Portfólio:** Avaliação automática de múltiplos projetos
-- **Suporte à Decisão:** Auxílio a gerentes de projeto
-- **Alertas Precoces:** Identificação de projetos em risco
-
-### 5.2 Sistema de Controle de Temperatura
-- **Automação Residencial:** Chuveiros inteligentes
-- **Sistemas Industriais:** Controle de temperatura em processos
-- **IoT:** Sensores e atuadores conectados
 
 ---
 

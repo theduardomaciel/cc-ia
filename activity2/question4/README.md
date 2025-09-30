@@ -1,7 +1,5 @@
 # Atividade 2: Questão 4 — Sistema Baseado em Regras Fuzzy
 
-## ✅ IMPLEMENTAÇÃO COMPLETA
-
 Este projeto implementa dois sistemas baseados em regras fuzzy usando Scikit-Fuzzy:
 
 ### 🎯 Sistemas Implementados
@@ -19,8 +17,16 @@ Este projeto implementa dois sistemas baseados em regras fuzzy usando Scikit-Fuz
 ### 📁 Arquivos do Projeto
 
 - **`sistema_fuzzy.ipynb`** - Notebook principal com implementação completa
-- **`documentacao.md`** - Documentação detalhada do processo de modelagem
-- **`README.md`** - Este arquivo com instruções
+- **`DOCS.md`** - Documentação detalhada do processo de modelagem
+- **`README.md`** - Este arquivo com instruções gerais
+
+### 🔬 Aspectos Técnicos
+
+- **Linguagem:** Python 3.13+
+- **Biblioteca Principal:** scikit-fuzzy 0.5.0
+- **Visualização:** matplotlib
+- **Processamento:** numpy, scipy
+- **Documentação:** Jupyter Notebook
 
 ### 🚀 Como Executar
 
@@ -66,48 +72,3 @@ Este projeto implementa dois sistemas baseados em regras fuzzy usando Scikit-Fuz
 - Múltiplos cenários de teste
 - Interpretação dos resultados
 - Validação do comportamento esperado
-
-### 🎓 Objetivos Acadêmicos Atendidos
-
-- ✅ Descrição completa do processo de modelagem
-- ✅ Discussão das funções de pertinência (fuzzificação)
-- ✅ Implementação da inferência sobre conhecimento
-- ✅ Solução para defuzzificação
-- ✅ Execução com Scikit-Fuzzy
-- ✅ Documentação detalhada de todas as etapas
-- ✅ Descrição clara dos problemas e objetivos
-- ✅ Especificação de todas as variáveis
-- ✅ Notebook compartilhável
-
-### 📈 Resultados Demonstrados
-
-**Sistema de Análise de Risco:**
-- Projetos simples com muitos recursos: 85.7% de risco de sucesso
-- Projetos complexos com poucos recursos: 15.2% de risco de sucesso
-- Comportamento gradual e intuitivo
-
-**Sistema de Controle de Temperatura:**
-- Água fria + banho morno: +7.1 (mais água quente)
-- Água quente + banho frio: -8.3 (mais água fria)
-- Controle proporcional e suave
-
-### 🔬 Aspectos Técnicos
-
-- **Linguagem:** Python 3.13+
-- **Biblioteca Principal:** scikit-fuzzy 0.5.0
-- **Visualização:** matplotlib
-- **Processamento:** numpy, scipy
-- **Documentação:** Jupyter Notebook
-
-### 📚 Estrutura da Documentação
-
-1. **Introdução e Objetivos**
-2. **Definição das Variáveis**
-3. **Funções de Pertinência**
-4. **Base de Regras Fuzzy**
-5. **Sistema de Inferência**
-6. **Simulações e Testes**
-7. **Análise de Resultados**
-8. **Visualizações e Superfícies de Controle**
-9. **Processo de Inferência Detalhado**
-10. **Conclusões e Discussão**
