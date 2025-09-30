@@ -1,6 +1,6 @@
 # Sistema Especialista Baseado em Conhecimento
 
-Este é um sistema especialista implementado como atividade da disciplina de Inteligência Artificial do curso de Ciência da Computação. O sistema implementa uma arquitetura de agente baseado em conhecimento com todas as funcionalidades principais de um sistema especialista.
+Este é um sistema especialista que implementa uma arquitetura de agente baseado em conhecimento com todas as funcionalidades principais de um sistema especialista.
 
 ## 🧠 Funcionalidades Principais
 
@@ -181,8 +181,4 @@ src/
 
 ## 👥 Autores
 
-Desenvolvido como atividade acadêmica da disciplina de Inteligência Artificial.
-
-## 📄 Licença
-
-Este projeto é desenvolvido para fins educacionais.
+- [Eduardo Maciel Alexandre](https://github.com/theduardomaciel)
