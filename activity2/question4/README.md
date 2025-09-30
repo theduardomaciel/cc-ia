@@ -111,10 +111,3 @@ Este projeto implementa dois sistemas baseados em regras fuzzy usando Scikit-Fuz
 8. **Visualizações e Superfícies de Controle**
 9. **Processo de Inferência Detalhado**
 10. **Conclusões e Discussão**
-
----
-
-**Disciplina:** Inteligência Artificial  
-**Curso:** Ciência da Computação  
-**Implementação:** Scikit-Fuzzy  
-**Status:** ✅ Completo e Funcional
